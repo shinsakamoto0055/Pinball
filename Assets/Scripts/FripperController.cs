@@ -12,9 +12,9 @@ public class FripperController : MonoBehaviour {
     //弾いたときの傾き
     private float flickAngle = -20;
 
-    //画面の有効範囲（左画面）
-    Rect rect = new Rect(0, 0, 400, 1280);
-//    Rect rect_L = new Rect(400, 400, 800, 1280);
+    //画面の有効範囲
+    Rect rect_L = new Rect(0, 0, Screen.width/2, Screen.height);        //左画面範囲
+    Rect rect_R = new Rect(Screen.width / 2, Screen.width / 2, Screen.width, Screen.height);    //右画面範囲
 
     // Use this for initialization
     void Start () {
@@ -50,62 +50,130 @@ public class FripperController : MonoBehaviour {
         //***********************************************************************************************************
 
 
-        int fingerCount = 0;
-        foreach (Touch touch in Input.touches)
-        {
-            if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
-                fingerCount++;
-//          Debug.Log("User has " + fingerCount + " finger(s) touching the screen");
-        }
+        //Input.touchCount の数だけタップ判定の処理をおこなう
+        for (int i = 0; i < Input.touchCount; i++) {
 
-
-        if (Input.touchCount > 0){
-
-            Touch _touch = Input.GetTouch(0);
+            Touch _touch = Input.GetTouch(i);
             Vector2 newVec = new Vector2(_touch.position.x, Screen.height - _touch.position.y);
 
-            //タッチしていない場合
-            if (fingerCount == 0) {
+            //画面右側がタップ開始された && タグが右フリッパーである
+            if (newVec.x >= rect_R.xMin && newVec.x < rect_R.xMax && newVec.y >= rect_R.yMin && newVec.y < rect_R.yMax 
+                && Input.touches[i].phase == TouchPhase.Began 
+                && tag == "RightFripperTag"){
 
-                    SetAngle(this.defaultAngle);
-                    Debug.Log(66);
+                SetAngle(this.flickAngle);
+//                Debug.Log("右フリッパー開始");
             }
 
-            //１タッチしている場合
-            if (fingerCount == 1) {
-                //タップ判定
-                if (Input.touches[0].phase == TouchPhase.Began) {  //指１本でタップした
+            //画面左側がタップ開始された && タグが左フリッパーである
+            if (newVec.x >= rect_L.xMin && newVec.x < rect_L.xMax && newVec.y >= rect_L.yMin && newVec.y < rect_L.yMax 
+                && Input.touches[i].phase == TouchPhase.Began 
+                && tag == "LeftFripperTag"){
 
-                    //Rectとタッチの位置を判定
-                    if (newVec.x >= rect.xMin && newVec.x < rect.xMax && newVec.y >= rect.yMin && newVec.y < rect.yMax)
-                    {
-                        if (tag == "LeftFripperTag")
-                        {
-                            SetAngle(this.flickAngle);
-                            Debug.Log("左タッチ１");
-                        }
-                    } else {
-                        if (tag == "RightFripperTag") {
-                            SetAngle(this.flickAngle);
-                            Debug.Log("右タッチ１");
+                SetAngle(this.flickAngle);
+//                Debug.Log("左フリッパー開始");
+            }
+
+           //画面右側がタップ終了された && タグが右フリッパーである
+            if (newVec.x >= rect_R.xMin && newVec.x < rect_R.xMax && newVec.y >= rect_R.yMin && newVec.y < rect_R.yMax 
+                && Input.touches[i].phase == TouchPhase.Ended 
+                && tag == "RightFripperTag"){
+
+                SetAngle(this.defaultAngle);
+//                Debug.Log("右フリッパー終了");
+            }
+            //画面左側がタップ終了された && タグが左フリッパーである
+            if (newVec.x >= rect_L.xMin && newVec.x < rect_L.xMax && newVec.y >= rect_L.yMin 
+                && newVec.y < rect_L.yMax && Input.touches[i].phase == TouchPhase.Ended 
+                && tag == "LeftFripperTag"){
+
+                SetAngle(this.defaultAngle);
+//                Debug.Log("左フリッパー終了");
+            }
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        /*
+
+
+                int fingerCount = 0;
+                foreach (Touch touch in Input.touches)
+                {
+                    if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
+                        fingerCount++;
+        //          Debug.Log("User has " + fingerCount + " finger(s) touching the screen");
+                }
+
+
+                if (Input.touchCount > 0){
+
+                    Touch _touch = Input.GetTouch(0);
+                    Vector2 newVec = new Vector2(_touch.position.x, Screen.height - _touch.position.y);
+
+                    //タッチしていない場合
+                    if (fingerCount == 0) {
+
+                            SetAngle(this.defaultAngle);
+                            Debug.Log(66);
+                    }
+
+                    //１タッチしている場合
+                    if (fingerCount == 1) {
+                        //タップ判定
+                        if (Input.touches[0].phase == TouchPhase.Began) {  //指１本でタップした
+
+                            //Rectとタッチの位置を判定
+                            if (newVec.x >= rect.xMin && newVec.x < rect.xMax && newVec.y >= rect.yMin && newVec.y < rect.yMax)
+                            {
+                                if (tag == "LeftFripperTag")
+                                {
+                                    SetAngle(this.flickAngle);
+                                    Debug.Log("左タッチ１");
+                                }
+                            } else {
+                                if (tag == "RightFripperTag") {
+                                    SetAngle(this.flickAngle);
+                                    Debug.Log("右タッチ１");
+                                }
+                            }
+                        } else if (Input.touches[0].phase == TouchPhase.Ended) {    //指１本でタップを離した
+                                SetAngle(this.defaultAngle);
+                                Debug.Log("タッチ放す１");
                         }
                     }
-                } else if (Input.touches[0].phase == TouchPhase.Ended) {    //指１本でタップを離した
-                        SetAngle(this.defaultAngle);
-                        Debug.Log("タッチ放す１");
-                }
-            }
 
-            //２タッチしている場合
-            if (fingerCount == 2) {
+                    //２タッチしている場合
+                    if (fingerCount == 2) {
 
-                if (Input.touches[1].phase == TouchPhase.Began) {
-                    SetAngle(this.flickAngle);
-                    Debug.Log("２タッチ");
+                        if (Input.touches[1].phase == TouchPhase.Began) {
+                            SetAngle(this.flickAngle);
+                            Debug.Log("２タッチ");
+                        }
+                    }
                 }
-            }
-        }
+            */
+
     }
+
     public void SetAngle(float angle) {
         JointSpring jointSpr = this.myHingeJoynt.spring;
         jointSpr.targetPosition = angle;
