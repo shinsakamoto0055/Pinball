@@ -51,69 +51,93 @@ public class FripperController : MonoBehaviour {
 
 
         //Input.touchCount の数だけタップ判定の処理をおこなう
-        for (int i = 0; i < Input.touchCount; i++) {
+        for (int i = 0; i < Input.touchCount; i++)
+        {
 
+            //タッチした座標を取得
             Touch _touch = Input.GetTouch(i);
             Vector2 newVec = new Vector2(_touch.position.x, Screen.height - _touch.position.y);
 
-            //画面右側がタップ開始された && タグが右フリッパーである
-            if (newVec.x >= rect_R.xMin && newVec.x < rect_R.xMax && newVec.y >= rect_R.yMin && newVec.y < rect_R.yMax 
-                && Input.touches[i].phase == TouchPhase.Began 
-                && tag == "RightFripperTag"){
+            //タッチ情報判定
+            switch (Input.touches[i].phase) {
 
-                SetAngle(this.flickAngle);
-//                Debug.Log("右フリッパー開始");
+                //画面をタッチした
+                case TouchPhase.Began:
+
+                    //画面右側 && タグが右フリッパーである
+                    if (newVec.x >= rect_R.xMin && newVec.x < rect_R.xMax && tag == "RightFripperTag") {
+                        SetAngle(this.flickAngle);
+                        Debug.Log("右フリッパー開始");
+                    }
+                    //画面左側がタップ開始された && タグが左フリッパーである
+                    if (newVec.x >= rect_L.xMin && newVec.x < rect_L.xMax && tag == "LeftFripperTag") {
+                        SetAngle(this.flickAngle);
+                        Debug.Log("左フリッパー開始");
+                    }
+                        break;
+
+                //タッチを離した
+                case TouchPhase.Ended:
+
+                    //画面右側 && タグが右フリッパーである
+                    if (newVec.x >= rect_R.xMin && newVec.x < rect_R.xMax && tag == "RightFripperTag") {
+                        SetAngle(this.defaultAngle);
+                        Debug.Log("右フリッパー終了");
+                    }
+                    //画面左側がタップ開始された && タグが左フリッパーである
+                    if (newVec.x >= rect_L.xMin && newVec.x < rect_L.xMax && tag == "LeftFripperTag") {
+                        SetAngle(this.defaultAngle);
+                        Debug.Log("左フリッパー終了");
+                    }
+                    break;
+
             }
-
-            //画面左側がタップ開始された && タグが左フリッパーである
-            if (newVec.x >= rect_L.xMin && newVec.x < rect_L.xMax && newVec.y >= rect_L.yMin && newVec.y < rect_L.yMax 
-                && Input.touches[i].phase == TouchPhase.Began 
-                && tag == "LeftFripperTag"){
-
-                SetAngle(this.flickAngle);
-//                Debug.Log("左フリッパー開始");
-            }
-
-           //画面右側がタップ終了された && タグが右フリッパーである
-            if (newVec.x >= rect_R.xMin && newVec.x < rect_R.xMax && newVec.y >= rect_R.yMin && newVec.y < rect_R.yMax 
-                && Input.touches[i].phase == TouchPhase.Ended 
-                && tag == "RightFripperTag"){
-
-                SetAngle(this.defaultAngle);
-//                Debug.Log("右フリッパー終了");
-            }
-            //画面左側がタップ終了された && タグが左フリッパーである
-            if (newVec.x >= rect_L.xMin && newVec.x < rect_L.xMax && newVec.y >= rect_L.yMin 
-                && newVec.y < rect_L.yMax && Input.touches[i].phase == TouchPhase.Ended 
-                && tag == "LeftFripperTag"){
-
-                SetAngle(this.defaultAngle);
-//                Debug.Log("左フリッパー終了");
-            }
-
-
-
-
-
-
-
-
-
-
         }
 
+        /*修正前スクリプト******************************************************************************************************
 
+                    //Input.touchCount の数だけタップ判定の処理をおこなう
+                    for (int i = 0; i < Input.touchCount; i++) {
 
+                    Touch _touch = Input.GetTouch(i);
+                    Vector2 newVec = new Vector2(_touch.position.x, Screen.height - _touch.position.y);
 
+                    //画面右側がタップ開始された && タグが右フリッパーである
+                    if (newVec.x >= rect_R.xMin && newVec.x < rect_R.xMax && newVec.y >= rect_R.yMin && newVec.y < rect_R.yMax 
+                        && Input.touches[i].phase == TouchPhase.Began 
+                        && tag == "RightFripperTag"){
 
+                        SetAngle(this.flickAngle);
+        //                Debug.Log("右フリッパー開始");
+                    }
 
+                    //画面左側がタップ開始された && タグが左フリッパーである
+                    if (newVec.x >= rect_L.xMin && newVec.x < rect_L.xMax && newVec.y >= rect_L.yMin && newVec.y < rect_L.yMax 
+                        && Input.touches[i].phase == TouchPhase.Began 
+                        && tag == "LeftFripperTag"){
 
+                        SetAngle(this.flickAngle);
+        //                Debug.Log("左フリッパー開始");
+                    }
 
+                   //画面右側がタップ終了された && タグが右フリッパーである
+                    if (newVec.x >= rect_R.xMin && newVec.x < rect_R.xMax && newVec.y >= rect_R.yMin && newVec.y < rect_R.yMax 
+                        && Input.touches[i].phase == TouchPhase.Ended 
+                        && tag == "RightFripperTag"){
 
+                        SetAngle(this.defaultAngle);
+        //                Debug.Log("右フリッパー終了");
+                    }
+                    //画面左側がタップ終了された && タグが左フリッパーである
+                    if (newVec.x >= rect_L.xMin && newVec.x < rect_L.xMax && newVec.y >= rect_L.yMin 
+                        && newVec.y < rect_L.yMax && Input.touches[i].phase == TouchPhase.Ended 
+                        && tag == "LeftFripperTag"){
 
+                        SetAngle(this.defaultAngle);
+        //                Debug.Log("左フリッパー終了");
+                    }
 
-        /*
-
+        //****************************************************************************************************************
 
                 int fingerCount = 0;
                 foreach (Touch touch in Input.touches)
@@ -171,6 +195,7 @@ public class FripperController : MonoBehaviour {
                     }
                 }
             */
+        //****************************************************************************************************************
 
     }
 
